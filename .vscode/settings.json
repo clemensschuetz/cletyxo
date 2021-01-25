@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "*.h": "cpp",
+        "*.cpp": "cpp",
+        "xstring": "cpp",
+        "xutility": "cpp"
+    }
+}
