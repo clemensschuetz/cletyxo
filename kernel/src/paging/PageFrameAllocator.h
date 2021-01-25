@@ -1,8 +1,8 @@
 #pragma once
-#include "EfiMemory.h"
+#include "../EfiMemory.h"
 #include <stdint.h>
-#include "Bitmap.h"
-#include "Memory.h"
+#include "../Bitmap.h"
+#include "../Memory.h"
 
 namespace Visionizer
 {
@@ -47,4 +47,7 @@ namespace Visionizer
         // Unreserve multiple reserved pages - Starts of address and continues to unreserve the pages after it (indicated by pageCount)
         void UnreservePages(void* address, uint64_t pageCount);
     };
+
+
+    extern PageFrameAllocator GlobalAllocator;
 }

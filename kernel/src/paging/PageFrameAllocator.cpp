@@ -11,6 +11,8 @@ namespace Visionizer
     uint64_t usedMemory;
     // Has it been initialized? Do not initialize more than once
     bool initialized = false;
+    // The global allocator for everything
+    PageFrameAllocator GlobalAllocator;
 
     // Reads the Efi memory map
     void PageFrameAllocator::ReadEfiMemoryMap(EFI_MEMORY_DESCRIPTOR* mMap, size_t mMapSize, size_t mMapDescSize)
