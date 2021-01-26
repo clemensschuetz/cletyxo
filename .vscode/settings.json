@@ -4,5 +4,8 @@
         "*.cpp": "cpp",
         "xstring": "cpp",
         "xutility": "cpp"
-    }
+    },
+    "cSpell.words": [
+        "cletyxo"
+    ]
 }
