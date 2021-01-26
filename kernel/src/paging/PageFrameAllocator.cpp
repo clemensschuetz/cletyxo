@@ -77,23 +77,47 @@ namespace Visionizer
 
     // ------------ SINGLE PAGE ACTIONS ---------------   
 
+    uint64_t pageBitmapIndex = 0;
+    // TODO, FIXME this is not optimized
+    // This function will return a not-used page
+    void* PageFrameAllocator::RequestPage()
+    {
+        for (; pageBitmapIndex < PageBitmap.Size * 8; pageBitmapIndex++)
+        {
+            if (PageBitmap[pageBitmapIndex] == true) continue; // If used, continue, otherwise, use it
+            LockPage((void*)(pageBitmapIndex * 4096));
+            return (void*)(pageBitmapIndex * 4096);
+        }
+        // Nothing found :( (Nothing left)
+        // Now we have to swap (Saving memory to the disk in order to save memory)
+
+        return NULL; // Page-frame Swap to file TODO FIXME
+
+    }
+
     // Free a memory page
     void PageFrameAllocator::FreePage(void* address)
     {
         uint64_t index = (uint64_t)address / 4096; // Get Bytes
         if (PageBitmap[index] == false) return; // If it is false, it is already free and why free a free page.
-        PageBitmap.Set(index, false); // Now, we are making it free
-        freeMemory += 4096; // The amount of one page
-        usedMemory -= 4096; // Removing the amount of one page
+
+        if(PageBitmap.Set(index, false))
+        {
+            freeMemory += 4096; // The amount of one page
+            usedMemory -= 4096; // Removing the amount of one page
+            if (pageBitmapIndex > index) pageBitmapIndex = index;
+        }
     }
     // Lock a page from access
     void PageFrameAllocator::LockPage(void* address)
     {
         uint64_t index = (uint64_t)address / 4096; // Get Bytes
         if (PageBitmap[index] == true) return; // If it is true, it is already locked, and you shouldnt use an already used page
-        PageBitmap.Set(index, true); // Now, we are locking it
-        freeMemory -= 4096; // The amount of one page
-        usedMemory += 4096; // Adding the amount of one page
+        if (PageBitmap.Set(index, true)) // Now, we are locking it
+        {
+            freeMemory -= 4096; // The amount of one page
+            usedMemory += 4096; // Adding the amount of one page
+        }
     }
     // Reserves a page
     void PageFrameAllocator::ReservePage(void* address)
@@ -101,9 +125,11 @@ namespace Visionizer
         // Same comments as above (LockPage())
         uint64_t index = (uint64_t)address / 4096; 
         if (PageBitmap[index] == true) return; 
-        PageBitmap.Set(index, true); 
-        freeMemory -= 4096; 
-        reservedMemory += 4096; 
+        if(PageBitmap.Set(index, true))
+        {
+            freeMemory -= 4096; 
+            reservedMemory += 4096; 
+        }
     }
     // Unreserve a reserved page
     void PageFrameAllocator::UnreservePage(void* address)
@@ -111,9 +137,13 @@ namespace Visionizer
         // Same comments as in FreePage()
         uint64_t index = (uint64_t)address / 4096;
         if (PageBitmap[index] == true) return;
-        PageBitmap.Set(index, true);
-        freeMemory -= 4096;
-        reservedMemory += 4096;
+        if(PageBitmap.Set(index, true))
+        {
+            freeMemory -= 4096;
+            reservedMemory += 4096;            
+            if (pageBitmapIndex > index) pageBitmapIndex = index;
+        }
+
     }
 
     // ------------ MULTIPLE PAGES ACTIONS ---------------   
@@ -151,22 +181,6 @@ namespace Visionizer
         }
     }
 
-    // TODO, FIXME this is horrible (not optimized!)
-    // This function will return a not-used page
-    void* PageFrameAllocator::RequestPage()
-    {
-        for (uint64_t i = 0; i < PageBitmap.Size * 8; i++)
-        {
-            if (PageBitmap[i] == true) continue; // If used, continue, otherwise, use it
-            LockPage((void*)(i * 4096));
-            return (void*)(i * 4096);
-        }
-        // Nothing found :( (Nothing left)
-        // Now we have to swap (Saving memory to the disk in order to save memory)
-
-        return NULL; // Page-frame Swap to file TODO FIXME
-
-    }
 
     // ---------------------- GETTERS --------------------------
     uint64_t PageFrameAllocator::GetFreeRAM()
