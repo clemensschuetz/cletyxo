@@ -79,6 +79,11 @@ namespace Visionizer
 
 		uint64_t fbBase = (uint64_t)bootInfo->framebuffer->BaseAddress;
 		uint64_t fbSize = (uint64_t)bootInfo->framebuffer->BufferSize + 0x1000;
+		
+		// Locking them to prevent flickering
+		GlobalAllocator.LockPages((void*)fbBase, fbSize / 0x1000 + 1);
+
+
 		for (uint64_t i = fbBase; i < fbBase + fbSize; i += 4096){
 			pageTableManager.MapMemory((void*)i, (void*)i);
 		}
