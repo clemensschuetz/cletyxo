@@ -3,6 +3,7 @@
 #include <elf.h>
 
 
+// WELCOME TO THE CLETYXO BOOTLOADER :)
 
 typedef unsigned long long size_t;
 

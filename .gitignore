@@ -58,3 +58,7 @@ dkms.conf
 # Binaries
 *.img
 *.elf
+
+# Custom ignores
+*.osignore.* 
+# This is for us to be able to ignore things more easily :)

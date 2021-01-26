@@ -13,8 +13,7 @@ Filetypes:
 
 
 Starter applications:
-    - **Catapult**: This program allows you to launch any .exe from windows on your cletyxo machine.
-    - **Notepad**: A basic text editor
+    - **Vinghir**: A text editor
 
 
 ## How to get started
@@ -30,3 +29,4 @@ On Windows, double-click the run.bat.
 Tired of using 2 commands to build the kernel?
 Use ``make pfb`` to execute ``make kernel`` first and then ``make buildimg``. This saves you some time. Pfb stands for ``Prepare for boot``
 If you are on Linux, use ``make boot`` in order to first make the kernel, then build the img and then also run it.
+
