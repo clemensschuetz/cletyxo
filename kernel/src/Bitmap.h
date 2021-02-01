@@ -2,7 +2,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-
 namespace Visionizer
 {
     // This is existing as we do not want to have to make a memory-map for (example)32G. This is why we use bitmaps. 

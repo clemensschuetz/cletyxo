@@ -1,0 +1,46 @@
+{
+	// Basic Snippet showing header
+	"Template Header Setup": {
+		"prefix": ["hdr", "header"],
+		"body": [
+			"#pragma once",
+			"",
+			"",
+			"namespace Visionizer",
+			"{",
+			"",
+			"${1:body}",
+			"",
+			"}",
+		],
+		"description": "A simple header setup"
+	},
+
+	// Basic Snippet showing c++ file
+	"Template C++ Setup": {
+		"prefix": ["cppf", "tmplf", "file"],
+		"body": [
+			"#include ${1:hdr} ",
+			"",
+			"",
+			"namespace Visionizer",
+			"{",
+			"",
+				"${2:body}",
+			"",
+			"}",
+		],
+		"description": "A simple C++ setup"
+	},
+
+	"For Loop but better": {
+		"prefix": ["for", "loop"],
+		"body": [
+			"for (${1:type} ${2:name} = 0; ${2:name} ${3:sym} ${4:cond}; ${2:name})",
+			"{",
+			"   ${5:body}",
+			"}",
+		],
+		"description": "A simple yet customizable for loop setup"
+	}
+}

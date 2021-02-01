@@ -3,7 +3,7 @@
 namespace Visionizer
 {
 	// The main
-	extern "C" void _startKernel(KernelBootInfo* bootInfo)
+	extern "C" void StartKernel(KernelBootInfo* bootInfo)
 	{
 
 		KernelInfo kernelInfo = InitializeKernel(bootInfo);
@@ -11,7 +11,6 @@ namespace Visionizer
 		PageTableManager* pageTableManager = kernelInfo.pageTableManager;
 		// Actual start
 		BasicRenderer infoRenderer = BasicRenderer(bootInfo->framebuffer, bootInfo->psf1_Font);
-
 
 		// ----------------------------------------- COPYRIGHT NOTICE ----------------------------
 		
@@ -21,7 +20,7 @@ namespace Visionizer
 //		infoRenderer.Print("Copyright (C) Visionizer Corporation. All d reserved.");
 //		// -----------------------
 //
-//		infoRenderer.Print("Kernel successfully initialized. Have fun!");
+		infoRenderer.Print("Kernel successfully initialized. Have fun!");
 
 
 

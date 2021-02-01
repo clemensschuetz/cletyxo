@@ -1,4 +1,5 @@
 #include "KernelUtil.h"
+#include "gdt/gdt.h"
 
 namespace Visionizer
 {
@@ -45,6 +46,10 @@ namespace Visionizer
     // Initializes the kernel TODO, make it callable  max of once
     KernelInfo InitializeKernel(KernelBootInfo* bootInfo)
     {
+        GDTDescriptor gdtDescriptor;
+        gdtDescriptor.Size = sizeof(GDT) - 1;
+        gdtDescriptor.Offset = (uint64_t)&DefaultGDT;
+        LoadGDT(&gdtDescriptor);
 
         PrepareMemory(bootInfo);
 
