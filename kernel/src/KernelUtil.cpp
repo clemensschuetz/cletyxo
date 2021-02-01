@@ -53,6 +53,7 @@ namespace Visionizer
 
         PrepareMemory(bootInfo);
 
+        // Reset the Entire Screen to black
         Memset(bootInfo->framebuffer->BaseAddress, 0, bootInfo->framebuffer->BufferSize);
 
         return kernelInfo;
