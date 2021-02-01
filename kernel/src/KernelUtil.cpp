@@ -1,5 +1,7 @@
 #include "KernelUtil.h"
 #include "gdt/gdt.h"
+#include "interrupts/IDT.h"
+#include "interrupts/Interrupts.h"
 
 namespace Visionizer
 {
@@ -41,11 +43,30 @@ namespace Visionizer
         kernelInfo.pageTableManager = &pageTableManager;
     }
 
+    // Our IDT Descriptor Table
+    IDTR idtr; 
+    void PrepareInterrupts()
+    {
+        idtr.limit = 0x0FFF; // Size of a full IDT
+        idtr.offset = (uint64_t)GlobalAllocator.RequestPage();
 
+        IDTDescEntry* intPageFault = (IDTDescEntry*)(idtr.offset + 0xE * sizeof(IDTDescEntry));
+        intPageFault->SetOffset((uint64_t)PageFault_Handler);
+        intPageFault->type_attr = IDT_TA_InterruptGate;
+        intPageFault->selector = 0x08; // Kernel segment
 
+        // Loads the idt into memory
+        asm ("lidt %0" : : "m" (idtr));
+    }
+
+    BasicRenderer r = BasicRenderer(NULL, NULL);
     // Initializes the kernel TODO, make it callable  max of once
     KernelInfo InitializeKernel(KernelBootInfo* bootInfo)
     {
+        // Initialize Global Renderer   
+        r = BasicRenderer(bootInfo->framebuffer, bootInfo->psf1_Font);
+        GlobalRenderer = &r;
+
         GDTDescriptor gdtDescriptor;
         gdtDescriptor.Size = sizeof(GDT) - 1;
         gdtDescriptor.Offset = (uint64_t)&DefaultGDT;
@@ -55,6 +76,8 @@ namespace Visionizer
 
         // Reset the Entire Screen to black
         Memset(bootInfo->framebuffer->BaseAddress, 0, bootInfo->framebuffer->BufferSize);
+
+        PrepareInterrupts();
 
         return kernelInfo;
     }

@@ -4,6 +4,8 @@
 namespace Visionizer
 {
 
+	BasicRenderer* GlobalRenderer;
+
 	BasicRenderer::BasicRenderer(Framebuffer* targetFrameBuffer, PSF1_FONT* psf1_font)
 	{
 		TargetFramebuffer = targetFrameBuffer;

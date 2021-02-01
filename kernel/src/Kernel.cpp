@@ -10,7 +10,6 @@ namespace Visionizer
 
 		PageTableManager* pageTableManager = kernelInfo.pageTableManager;
 		// Actual start
-		BasicRenderer infoRenderer = BasicRenderer(bootInfo->framebuffer, bootInfo->psf1_Font);
 
 		// ----------------------------------------- COPYRIGHT NOTICE ----------------------------
 		
@@ -20,9 +19,10 @@ namespace Visionizer
 //		infoRenderer.Print("Copyright (C) Visionizer Corporation. All d reserved.");
 //		// -----------------------
 //
-		infoRenderer.Print("Kernel successfully initialized. Have fun!");
+		GlobalRenderer->Print("Kernel initialized successfully!");
 
-
+		int* test = (int*)0x80000000000;
+		*test = 2;
 
 		while(true); // FIXME, I guess while true isnt always good
 	}
