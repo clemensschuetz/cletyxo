@@ -1,4 +1,5 @@
 #include "KernelUtil.h"
+#include "Panic.h"
 
 namespace Visionizer
 {
@@ -20,6 +21,7 @@ namespace Visionizer
 //		// -----------------------
 //
 		GlobalRenderer->Print("Kernel initialized successfully!");
+
 
 		int* test = (int*)0x80000000000;
 		*test = 2;

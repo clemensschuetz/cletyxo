@@ -50,10 +50,25 @@ namespace Visionizer
         idtr.Limit = 0x0FFF; // Size of a full idtr
         idtr.Offset = (uint64_t)GlobalAllocator.RequestPage();
 
+
+        // Adding the PageFaultEntry
         IDTDescEntry* int_PageFault = (IDTDescEntry*)(idtr.Offset + 0xE * sizeof(IDTDescEntry));
         int_PageFault->SetOffset((uint64_t)PageFault_Handler);
         int_PageFault->type_attr = IDT_TA_InterruptGate;
-        int_PageFault->selector = 0x08;
+        int_PageFault->selector = 0x08
+        
+        // Adding the DoubleFaultEntry
+        IDTDescEntry* int_DoubleFault = (IDTDescEntry*)(idtr.Offset + 0x8 * sizeof(IDTDescEntry));
+        int_DoubleFault->SetOffset((uint64_t)DoubleFault_Handler);
+        int_DoubleFault->type_attr = IDT_TA_InterruptGate;
+        int_DoubleFault->selector = 0x08;
+        
+        // Adding the GPFaultEntry
+        IDTDescEntry* int_GPFault = (IDTDescEntry*)(idtr.Offset + 0xD * sizeof(IDTDescEntry));
+        int_GPFault->SetOffset((uint64_t)GPFault_Handler);
+        int_GPFault->type_attr = IDT_TA_InterruptGate;
+        int_GPFault->selector = 0x08;
+
 
         asm ("lidt %0" : : "m" (idtr));
     }

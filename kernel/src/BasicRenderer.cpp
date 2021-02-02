@@ -55,4 +55,48 @@ namespace Visionizer
 		}
 	}
 
+
+		
+	void BasicRenderer::Clear(uint32_t colour)
+	{
+		uint64_t fbBase = (uint64_t)TargetFramebuffer->BaseAddress;
+		uint64_t bytesPerScanline = (uint64_t)TargetFramebuffer->PixelsPerScanline * 4; // One Pixel has 4 bytes
+		uint64_t fbHeight = (uint64_t)TargetFramebuffer->Height;
+		uint64_t fbSize = (uint64_t)TargetFramebuffer->BufferSize;
+
+
+		for (int verticalScanline = 0; verticalScanline < fbHeight; verticalScanline++)
+		{
+			uint64_t pixPtrBase = fbBase + (bytesPerScanline * verticalScanline); // Points to the first pixel in every row
+			for (uint32_t* pixPtr /* Pixel Pointer */ = (uint32_t*)pixPtrBase; pixPtr < (uint32_t*)(pixPtrBase + bytesPerScanline); pixPtr++)
+			{
+				*pixPtr = colour;
+			}
+		}
+	}
+	void BasicRenderer::NextLine()
+	{
+		CursorPosition.X = 0;
+		CursorPosition.Y += 16;
+	}
+
+
+	// Sets cursor to middle of screen
+	void BasicRenderer::SetCursorToCenterOfScreen()
+	{
+		unsigned int halfWidth =  GlobalRenderer->TargetFramebuffer->Width / 2;
+        unsigned int halfHeight = GlobalRenderer->TargetFramebuffer->Height / 2;
+
+		GlobalRenderer->CursorPosition = {halfWidth, halfHeight};
+	}
+
+	// Next Line, but it stays in the middle of the screen
+	void BasicRenderer::NextLineCenterOfScreen()
+	{
+		unsigned int halfWidth = TargetFramebuffer->Width / 2;
+        
+		CursorPosition = {halfWidth, CursorPosition.Y + 16};
+		return;
+	}
+
 }
