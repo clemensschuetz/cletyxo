@@ -16,26 +16,22 @@ namespace Visionizer
 
     // STRUCTS
 
-    // An entry in the IDT Descriptor Table
-    struct IDTDescEntry
-    {
-        uint16_t offset0;
-        uint16_t selector;
+    struct IDTDescEntry {
+        uint16_t offset0; 
+        uint16_t selector;  
         uint8_t ist; // Interrupt Stack Table
-        uint8_t type_attr; // Type and Attributes
+        uint8_t type_attr; // Types and Attributes
         uint16_t offset1;
         uint32_t offset2;
-        uint32_t ignore; // IGnore me, I just exist for completion
-        void SetOffset(uint64_t offset);
-        uint64_t GetOffset();
+        uint32_t ignore; // Ignore me, just for completion
+        void SetOffset(uint64_t offset); // Sets the offset
+        uint64_t GetOffset(); // Gets the offset
     };
 
-    // The IDT Descriptor Table
-    struct IDTR
-    {
-        uint16_t limit; // The limit | Size of a full IDTR: 0x0FFF
-        uint16_t offset;
-    }__attribute__((packed));
+    struct IDTR {
+        uint16_t Limit; // The limit | Full size of an IDTR: 0x0FFF
+        uint64_t Offset;
+    } __attribute__((packed));
 
 
 }

@@ -47,15 +47,14 @@ namespace Visionizer
     IDTR idtr; 
     void PrepareInterrupts()
     {
-        idtr.limit = 0x0FFF; // Size of a full IDT
-        idtr.offset = (uint64_t)GlobalAllocator.RequestPage();
+        idtr.Limit = 0x0FFF; // Size of a full idtr
+        idtr.Offset = (uint64_t)GlobalAllocator.RequestPage();
 
-        IDTDescEntry* intPageFault = (IDTDescEntry*)(idtr.offset + 0xE * sizeof(IDTDescEntry));
-        intPageFault->SetOffset((uint64_t)PageFault_Handler);
-        intPageFault->type_attr = IDT_TA_InterruptGate;
-        intPageFault->selector = 0x08; // Kernel segment
+        IDTDescEntry* int_PageFault = (IDTDescEntry*)(idtr.Offset + 0xE * sizeof(IDTDescEntry));
+        int_PageFault->SetOffset((uint64_t)PageFault_Handler);
+        int_PageFault->type_attr = IDT_TA_InterruptGate;
+        int_PageFault->selector = 0x08;
 
-        // Loads the idt into memory
         asm ("lidt %0" : : "m" (idtr));
     }
 
