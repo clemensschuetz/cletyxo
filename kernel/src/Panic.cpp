@@ -7,7 +7,8 @@ namespace Visionizer
 
     void Panic(const char* panicTitle, const char* panicMessage)
     {   
-        GlobalRenderer->Clear(0x00ff0000);
+        GlobalRenderer->DefaultClearColour = 0x00ff0000;
+        GlobalRenderer->ClearColour(0x00ff0000);
 
         GlobalRenderer->SetCursorToCenterOfScreen();
 

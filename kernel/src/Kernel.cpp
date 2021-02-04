@@ -1,5 +1,6 @@
 #include "KernelUtil.h"
 #include "Panic.h"
+#include "userinput/Mouse.h"
 
 namespace Visionizer
 {
@@ -15,18 +16,24 @@ namespace Visionizer
 		// ----------------------------------------- COPYRIGHT NOTICE ----------------------------
 		
 		// We have to print a copyright notice
-//		infoRenderer.Print("Cletyxo Terminal");
-//
-//		infoRenderer.Print("Copyright (C) Visionizer Corporation. All d reserved.");
-//		// -----------------------
-//
+		GlobalRenderer->Print("Visionizer's VShell");
+		GlobalRenderer->NextLine();
+		GlobalRenderer->Print("Copyright (C) Clemens Schuetz, Visionizer & Cletyxo Core Contributors. No guarantees granted.");
+		// -----------------------
+		GlobalRenderer->NextLine();
+		GlobalRenderer->NextLine();
+		GlobalRenderer->NextLine();
+		
 		GlobalRenderer->Print("Kernel initialized successfully!");
+		
+		// The actual while(true) loop
+		while(true)
+		{
+			ProcessMousePacket();
+		}
 
-
-		int* test = (int*)0x80000000000;
-		*test = 2;
-
-		while(true); // FIXME, I guess while true isnt always good
+		// Just here so UEFI wont shut our kernel down for not responding
+		while(true);
 	}
 
 }

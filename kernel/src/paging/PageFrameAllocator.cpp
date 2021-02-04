@@ -49,7 +49,7 @@ namespace Visionizer
 
         // Locking pages of our Bitmap because we do not want our bitmap to become corrupted :)
 
-        LockPages(&PageBitmap, PageBitmap.Size / 4096 + 1);
+        LockPages(PageBitmap.Buffer, PageBitmap.Size / 4096 + 1);
 
         //  Reserve pages of unusable / reserved memory.
         for (int i = 0; i < mMapEntries; i++)

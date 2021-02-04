@@ -1,7 +1,7 @@
 #include "KernelUtil.h"
 #include "gdt/gdt.h"
 #include "interrupts/IDT.h"
-#include "interrupts/Interrupts.h"
+
 
 namespace Visionizer
 {
@@ -45,32 +45,52 @@ namespace Visionizer
 
     // Our IDT Descriptor Table
     IDTR idtr; 
+
+    void SetIDTGate(void* handler, uint8_t entryOffset, uint8_t type_attr, uint8_t selector)
+    {
+        IDTDescEntry* entry = (IDTDescEntry*)(idtr.Offset + entryOffset * sizeof(IDTDescEntry));
+        entry->SetOffset((uint64_t)handler);
+        entry->type_attr = type_attr;
+        entry->selector = selector;
+    }
+
+
+
+
     void PrepareInterrupts()
     {
+
+        // PREPARING INTERRUPTS
+
         idtr.Limit = 0x0FFF; // Size of a full idtr
         idtr.Offset = (uint64_t)GlobalAllocator.RequestPage();
 
 
         // Adding the PageFaultEntry
-        IDTDescEntry* int_PageFault = (IDTDescEntry*)(idtr.Offset + 0xE * sizeof(IDTDescEntry));
-        int_PageFault->SetOffset((uint64_t)PageFault_Handler);
-        int_PageFault->type_attr = IDT_TA_InterruptGate;
-        int_PageFault->selector = 0x08
-        
+        SetIDTGate((void*)PageFault_Handler, 0xE, IDT_TA_InterruptGate, 0x08);
         // Adding the DoubleFaultEntry
-        IDTDescEntry* int_DoubleFault = (IDTDescEntry*)(idtr.Offset + 0x8 * sizeof(IDTDescEntry));
-        int_DoubleFault->SetOffset((uint64_t)DoubleFault_Handler);
-        int_DoubleFault->type_attr = IDT_TA_InterruptGate;
-        int_DoubleFault->selector = 0x08;
-        
+        SetIDTGate((void*)DoubleFault_Handler, 0x8, IDT_TA_InterruptGate, 0x08);
         // Adding the GPFaultEntry
-        IDTDescEntry* int_GPFault = (IDTDescEntry*)(idtr.Offset + 0xD * sizeof(IDTDescEntry));
-        int_GPFault->SetOffset((uint64_t)GPFault_Handler);
-        int_GPFault->type_attr = IDT_TA_InterruptGate;
-        int_GPFault->selector = 0x08;
-
+        SetIDTGate((void*)GPFault_Handler, 0xD, IDT_TA_InterruptGate, 0x08);
+        // Adding the Keyboard Entry
+        SetIDTGate((void*)KeyboardInt_Handler, 0x21, IDT_TA_InterruptGate, 0x08);
+        // Adding the Mouse Entry
+        SetIDTGate((void*)MouseInt_Handler, 0x2C, IDT_TA_InterruptGate, 0x08);
 
         asm ("lidt %0" : : "m" (idtr));
+
+        // PREPARING PIC-RELATED THINGS (KEYBOARD, MOUSE, PIC-CHIPS, etc)
+
+        // Remapping the PIC
+        RemapPIC();
+
+        // Preparing the keyboard
+
+
+
+
+
+
     }
 
     BasicRenderer r = BasicRenderer(NULL, NULL);
@@ -92,6 +112,16 @@ namespace Visionizer
         Memset(bootInfo->framebuffer->BaseAddress, 0, bootInfo->framebuffer->BufferSize);
 
         PrepareInterrupts();
+
+        InitPS2Mouse(); // TODO More mouse support
+
+        // Unmasking the keyboard
+        outb(PIC1_DATA, 0b11111001);
+        outb(PIC2_DATA, 0b11111111);
+
+
+        // Enables the masking
+        asm ("sti");
 
         return kernelInfo;
     }

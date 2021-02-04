@@ -33,6 +33,17 @@ namespace Visionizer
 	    }
 	}
 
+	void BasicRenderer::PutChar(char chr)
+	{
+		PutChar(chr, CursorPosition.X, CursorPosition.Y);
+		CursorPosition.X += 8;
+		if (CursorPosition.X + 8 > TargetFramebuffer->Width)
+		{
+			CursorPosition.X = 0;
+			CursorPosition.Y += 16;
+		}
+	}
+
 
 	Point CursorPosition;
 
@@ -57,7 +68,27 @@ namespace Visionizer
 
 
 		
-	void BasicRenderer::Clear(uint32_t colour)
+	void BasicRenderer::Clear()
+	{
+		uint64_t fbBase = (uint64_t)TargetFramebuffer->BaseAddress;
+		uint64_t bytesPerScanline = (uint64_t)TargetFramebuffer->PixelsPerScanline * 4; // One Pixel has 4 bytes
+		uint64_t fbHeight = (uint64_t)TargetFramebuffer->Height;
+		uint64_t fbSize = (uint64_t)TargetFramebuffer->BufferSize;
+
+
+		for (int verticalScanline = 0; verticalScanline < fbHeight; verticalScanline++)
+		{
+			uint64_t pixPtrBase = fbBase + (bytesPerScanline * verticalScanline); // Points to the first pixel in every row
+			for (uint32_t* pixPtr /* Pixel Pointer */ = (uint32_t*)pixPtrBase; pixPtr < (uint32_t*)(pixPtrBase + bytesPerScanline); pixPtr++)
+			{
+				*pixPtr = DefaultClearColour;
+			}
+		}
+	}
+
+
+
+	void BasicRenderer::ClearColour(uint32_t colour)
 	{
 		uint64_t fbBase = (uint64_t)TargetFramebuffer->BaseAddress;
 		uint64_t bytesPerScanline = (uint64_t)TargetFramebuffer->PixelsPerScanline * 4; // One Pixel has 4 bytes
@@ -73,6 +104,35 @@ namespace Visionizer
 				*pixPtr = colour;
 			}
 		}
+	}
+
+
+	void BasicRenderer::ClearChar(){
+
+		if (CursorPosition.X == 0){
+			CursorPosition.X = TargetFramebuffer->Width;
+			CursorPosition.Y -= 16;
+			if (CursorPosition.Y < 0) CursorPosition.Y = 0;
+		}
+
+		unsigned int xOff = CursorPosition.X;
+		unsigned int yOff = CursorPosition.Y;
+
+		unsigned int* pixPtr = (unsigned int*)TargetFramebuffer->BaseAddress;
+		for (unsigned long y = yOff; y < yOff + 16; y++){
+			for (unsigned long x = xOff - 8; x < xOff; x++){
+						*(unsigned int*)(pixPtr + x + (y * TargetFramebuffer->PixelsPerScanline)) = DefaultClearColour;
+			}
+		}
+
+		CursorPosition.X -= 8;
+
+		if (CursorPosition.X < 0){
+			CursorPosition.X = TargetFramebuffer->Width;
+			CursorPosition.Y -= 16;
+			if (CursorPosition.Y < 0) CursorPosition.Y = 0;
+		}
+
 	}
 	void BasicRenderer::NextLine()
 	{

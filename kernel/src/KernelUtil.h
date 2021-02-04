@@ -13,10 +13,12 @@
 #include "paging/PageMapIndexer.h"
 #include "paging/Paging.h"
 #include "paging/PageTableManager.h"
+#include "IO.h"
+#include "interrupts/Interrupts.h"
+#include "userinput/Mouse.h"
 
 extern uint64_t _KernelStart;
 extern uint64_t _KernelEnd;
-
 
 
 
