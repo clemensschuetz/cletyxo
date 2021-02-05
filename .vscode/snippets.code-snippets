@@ -4,6 +4,7 @@
 		"prefix": ["hdr", "header"],
 		"body": [
 			"#pragma once",
+			"#include <stdint.h>",
 			"",
 			"",
 			"namespace Visionizer",
