@@ -31,7 +31,6 @@ namespace Visionizer
     __attribute__((interrupt)) void KeyboardInt_Handler(interrupt_frame* frame);
     // Adds the Mouse functionality
     __attribute__((interrupt)) void MouseInt_Handler(interrupt_frame* frame);
-
     // PIC-THINGS
 
     // Remaps the PIC-Chips (PIC1 - Parent, PIC2 - Child)

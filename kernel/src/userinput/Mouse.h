@@ -6,27 +6,19 @@
 
 namespace Visionizer
 {
-    // Mouse Buttons
-    #define PS2LeftButton 0b000000001
-    #define PS2MiddleButton 0b000000010
-    #define PS2RightButton 0b00000100
+    #define PS2Leftbutton   0b00000001
+    #define PS2Middlebutton 0b00000010
+    #define PS2Rightbutton  0b00000100
+    #define PS2XSign        0b00010000
+    #define PS2YSign        0b00100000
+    #define PS2XOverflow    0b01000000
+    #define PS2YOverflow    0b10000000
 
-    // PS2-Bits
-    #define PS2XSign 0b00010000
-    #define PS2YSign 0b00110000
-    #define PS2XOverflow 0b0010000
-    #define PS2YOverflow 0b10000000
+    extern uint8_t MousePointer[];
 
-
-    // Initializes a PS2 MOuse
     void InitPS2Mouse();
-    // Fills the packets with data
     void HandlePS2Mouse(uint8_t data);
-    // Processes The packets from HandlePS2Mouse()
     void ProcessMousePacket();
-
-
-    // The Mouse Position
     extern Point MousePosition;
 
 }

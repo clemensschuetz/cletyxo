@@ -1,7 +1,7 @@
 #include "KernelUtil.h"
 #include "gdt/gdt.h"
 #include "interrupts/IDT.h"
-
+#include "userinput/Mouse.h"
 
 namespace Visionizer
 {
@@ -105,6 +105,7 @@ namespace Visionizer
         gdtDescriptor.Size = sizeof(GDT) - 1;
         gdtDescriptor.Offset = (uint64_t)&DefaultGDT;
         LoadGDT(&gdtDescriptor);
+        
 
         PrepareMemory(bootInfo);
 
@@ -122,6 +123,11 @@ namespace Visionizer
 
         // Enables the masking
         asm ("sti");
+
+        Point pos;
+        pos.X = 200;
+        pos.Y = 200;
+        GlobalRenderer->DrawOverlayMouseCursor(MousePointer, pos, 0x00ff0000);
 
         return kernelInfo;
     }

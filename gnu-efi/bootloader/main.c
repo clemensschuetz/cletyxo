@@ -137,6 +137,16 @@ int memcmp(const void* aptr, const void* bptr, size_t n)
 	return 0;
 }
 
+UINTN strcmp(const CHAR8* a, const CHAR8* b, const UINTN length)
+{
+	// Compare all of the characters in the string
+	for (UINTN i = 0; i < length; i++)
+	{
+		if (*a != *b) return 0;
+	}
+	return 1;
+}
+
 // Our Kernel struct (With everything that our kernel needs)
 typedef struct 
 {
@@ -145,6 +155,7 @@ typedef struct
 	EFI_MEMORY_DESCRIPTOR* s_Map;
 	UINTN s_MapSize;
 	UINTN s_MapDescriptorSize;
+	void* rsdp; // Read System Descriptor Pointer
 
 } KernelBootInfo;
 
@@ -279,6 +290,24 @@ EFI_STATUS efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
 		SystemTable->BootServices->GetMemoryMap(&MapSize, Map, &MapKey, &DescriptorSize, &DescriptorVersion);
 	}
 
+	EFI_CONFIGURATION_TABLE* configTable = SystemTable->ConfigurationTable;
+	void* rsdp = NULL; 
+	EFI_GUID Acpi2TableGuid = ACPI_20_TABLE_GUID;
+
+	for (UINTN index = 0; index < SystemTable->NumberOfTableEntries; index++){
+		if (CompareGuid(&configTable[index].VendorGuid, &Acpi2TableGuid)){
+			if (strcmp((CHAR8*)"RSD PTR ", (CHAR8*)configTable->VendorTable, 8)){
+				rsdp = (void*)configTable->VendorTable;
+				//break;
+			}
+		}
+		configTable++;
+	}
+
+
+
+
+
 	Print(L"\n\r");
 	Print(L"[Bootloader] I am Alex, remember me? Your bootloader. Anyways, goodbye. My job is done \n\r");
 
@@ -296,6 +325,7 @@ EFI_STATUS efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
 	kernelBootInfo.s_Map = Map;
 	kernelBootInfo.s_MapSize = MapSize;
 	kernelBootInfo.s_MapDescriptorSize = DescriptorSize;
+	kernelBootInfo.rsdp = rsdp;
 
 
 
