@@ -16,6 +16,8 @@ namespace Visionizer
 		PSF1_FONT* PSF1_Font;
 		unsigned int Colour;
 		unsigned int DefaultClearColour;
+		uint32_t MouseCursorBuffer[16 * 16];
+		uint32_t MouseCursorBufferAfter[16 * 16];
 
 		void Print(const char* str); // TODO Maybe add colour param to this, but default it to colour;
 
@@ -40,6 +42,22 @@ namespace Visionizer
 		void SetCursorToCenterOfScreen();
 		// Next Line, but it stays in the middle of the screen
 		void NextLineCenterOfScreen();
+
+
+		// Puts a pixel to a place | Uses a colour
+		void PutPixel(uint32_t x, uint32_t y, uint32_t colour);
+		// Gets a pixel
+		uint32_t GetPixel(uint32_t x, uint32_t y);
+
+		// Clears the cursor
+		void ClearMouseCursor(uint8_t* mouseCursor, Point position);
+
+
+		// Draws the Mouse Cursor
+		void DrawOverlayMouseCursor(uint8_t* mouseCursor, Point position, uint32_t colour);
+
+		// Is it drawn?
+		bool IsMouseDrawn;
 
 	};
 

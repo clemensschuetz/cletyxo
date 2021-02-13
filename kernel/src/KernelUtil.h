@@ -33,6 +33,7 @@ namespace Visionizer
 		EFI_MEMORY_DESCRIPTOR* mMap;
 		uint64_t mMapSize;
 		uint64_t mMapDescSize;
+		void* rsdp;
 	};
 
     

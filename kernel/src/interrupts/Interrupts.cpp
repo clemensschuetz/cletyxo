@@ -44,12 +44,11 @@ namespace Visionizer
         PICEndParent();
     }
 
-    __attribute__((interrupt)) void MouseInt_Handler(interrupt_frame* frame)
-    {
-        uint8_t mouseData = inb(0x60);
-        
-        HandlePS2Mouse(mouseData);
+    __attribute__((interrupt)) void MouseInt_Handler(interrupt_frame* frame){
 
+        uint8_t mouseData = inb(0x60);
+
+        HandlePS2Mouse(mouseData);
 
         PICEndChild();
     }
