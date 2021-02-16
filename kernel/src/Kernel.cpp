@@ -15,7 +15,7 @@ namespace Visionizer
 		// ----------------------------------------- COPYRIGHT NOTICE ----------------------------
 		
 		// We have to print a copyright notice
-		GlobalRenderer->Print("Visionizer's Shell");
+		GlobalRenderer->Print("Visionizer's SysMNG");
 		GlobalRenderer->NextLine();
 		GlobalRenderer->Print("Copyright (C) Clemens Schuetz, Visionizer & Cletyxo Core Contributors. No guarantees granted.");
 		// -----------------------
