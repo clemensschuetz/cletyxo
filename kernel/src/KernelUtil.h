@@ -16,6 +16,8 @@
 #include "IO.h"
 #include "interrupts/Interrupts.h"
 #include "userinput/Mouse.h"
+#include "ACPI.h"
+#include "PCI.h"
 
 extern uint64_t _KernelStart;
 extern uint64_t _KernelEnd;
@@ -33,7 +35,7 @@ namespace Visionizer
 		EFI_MEMORY_DESCRIPTOR* mMap;
 		uint64_t mMapSize;
 		uint64_t mMapDescSize;
-		void* rsdp;
+		ACPI::RSDP2* rsdp;
 	};
 
     

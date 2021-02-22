@@ -3,10 +3,12 @@
 #include "interrupts/IDT.h"
 #include "userinput/Mouse.h"
 
+
 namespace Visionizer
 {
     KernelInfo kernelInfo;
-    PageTableManager pageTableManager = NULL;
+
+    
 
     // Prepares paging, etc.
     void PrepareMemory(KernelBootInfo* bootInfo)
@@ -25,22 +27,22 @@ namespace Visionizer
         PageTable* PML4 = (PageTable*)GlobalAllocator.RequestPage();
         Memset(PML4, 0, 0x1000);
 
-        pageTableManager = PageTableManager(PML4);
+        GlobalPTM = PageTableManager(PML4);
 
         for (uint64_t t = 0; t < GetMemorySize(bootInfo->mMap, mMapEntries, bootInfo->mMapDescSize); t+= 0x1000){
-            pageTableManager.MapMemory((void*)t, (void*)t);
+            GlobalPTM.MapMemory((void*)t, (void*)t);
         }
 
         uint64_t fbBase = (uint64_t)bootInfo->framebuffer->BaseAddress;
         uint64_t fbSize = (uint64_t)bootInfo->framebuffer->BufferSize + 0x1000;
         GlobalAllocator.LockPages((void*)fbBase, fbSize/ 0x1000 + 1);
         for (uint64_t t = fbBase; t < fbBase + fbSize; t += 4096){
-            pageTableManager.MapMemory((void*)t, (void*)t);
+            GlobalPTM.MapMemory((void*)t, (void*)t);
         }
 
         asm ("mov %0, %%cr3" : : "r" (PML4));
 
-        kernelInfo.pageTableManager = &pageTableManager;
+        kernelInfo.pageTableManager = &GlobalPTM;
     }
 
     // Our IDT Descriptor Table
@@ -93,6 +95,16 @@ namespace Visionizer
 
     }
 
+    void PrepareACPI(KernelBootInfo* bootInfo)
+    {
+        ACPI::SDTHeader* xsdt = (ACPI::SDTHeader*)(bootInfo->rsdp->XSDTAddress);
+
+        ACPI::MCFGHeader* mcfg = (ACPI::MCFGHeader*)ACPI::FindTable(xsdt, (char*)"MCFG");
+
+        PCI::EnumeratePCI(mcfg);
+        
+    }
+
     BasicRenderer r = BasicRenderer(NULL, NULL);
     // Initializes the kernel TODO, make it callable  max of once
     KernelInfo InitializeKernel(KernelBootInfo* bootInfo)
@@ -115,6 +127,8 @@ namespace Visionizer
         PrepareInterrupts();
 
         InitPS2Mouse(); // TODO More mouse support
+
+        PrepareACPI(bootInfo);
 
         // Unmasking the keyboard
         outb(PIC1_DATA, 0b11111001);

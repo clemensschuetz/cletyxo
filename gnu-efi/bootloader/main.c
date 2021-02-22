@@ -36,22 +36,6 @@ typedef struct
 
 } PSF1_FONT;
 
-void Success(CHAR16* msg)
-{
-	Print(L" [ OK ] %s",  msg);
-}
-
-void Error(CHAR16* msg)
-{
-	Print(L" [ ERROR ] %s", msg);
-}
-
-void Info(CHAR16* msg)
-{
-	Print(L" [ INFO ] %s", msg);
-}
-
-
 // Initialize our GOP (Responsible for Graphic Drawing, etc)
 Framebuffer framebuffer;
 Framebuffer* InitializeGOP() // TODO REMOVE: BAD FOR PERFORMANCE
@@ -63,12 +47,12 @@ Framebuffer* InitializeGOP() // TODO REMOVE: BAD FOR PERFORMANCE
 	status = uefi_call_wrapper(BS->LocateProtocol, 3, &gopGuid, NULL, (void**)&gop);
 	if (EFI_ERROR(status)) 
 	{
-		Error(L"[Bootloader] Unable to locate the Graphics Output Protocol (GOP). Please restart your computer \n\r");
+		Print(L"[Bootloader] Unable to locate the Graphics Output Protocol (GOP). Please restart your computer \n\r");
 		return NULL;
 	}
 	else 
 	{
-		Success(L"[Bootloader] Graphics Output Protocol (GOP) successfully located. \n\r");
+		Print(L"[Bootloader] Graphics Output Protocol (GOP) successfully located. \n\r");
 	}
 	framebuffer.BaseAddress = (void*)gop->Mode->FrameBufferBase;
 	framebuffer.BufferSize = gop->Mode->FrameBufferSize;
@@ -179,21 +163,21 @@ UINTN strcmp(CHAR8* a, CHAR8* b, UINTN length){
 EFI_STATUS efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
 	InitializeLib(ImageHandle, SystemTable);
 
-	Info(L"Visionizer Cletyxo [ Version 0.1 Pre-Alpha ] \n\r"); // Get version automatically TODO
-	Info(L"(c) 2021 Visionizer Corporation. All rights reserverd \n\r");
-	Info(L"\n\r");
-	Info(L"Initializing Startup Sequence... \n\r");
-	Info(L"\n\r");
-	Info(L"[Bootloader] He lā maikaʻi, my name is Alex and I am your bootloader. I will take care of the booting and setup your entire system. Hoʻomaha, no need to worry, I will tell you exactly whats wrong. :) \n\r");
-	Info(L"\n\r");
+	Print(L"Visionizer Cletyxo [ Version 0.1 Pre-Alpha ] \n\r"); // Get version automatically TODO
+	Print(L"(c) 2021 Visionizer Corporation. All rights reserverd \n\r");
+	Print(L"\n\r");
+	Print(L"Initializing Startup Sequence... \n\r");
+	Print(L"\n\r");
+	Print(L"[Bootloader] He lā maikaʻi, my name is Alex and I am your bootloader. I will take care of the booting and setup your entire system. Hoʻomaha, no need to worry, I will tell you exactly whats wrong. :) \n\r");
+	Print(L"\n\r");
 
 	EFI_FILE* Kernel = LoadFile(NULL, L"kernel.elf", ImageHandle, SystemTable);
 	if(Kernel == NULL) 
 	{
-		Error(L"[Bootloader] Fatal: Could not verify existance of kernel.elf. Please reinstall the system or reboot your computer.\n\r"); // Better msg TODO
+		Print(L"[Bootloader] Fatal: Could not verify existance of kernel.elf. Please reinstall the system or reboot your computer.\n\r"); // Better msg TODO
 	} // Maybe add checkmarks TODO
 	else {
-		Success(L"[Bootloader] Success: Kernels existance verified. \n\r");
+		Print(L"[Bootloader] Success: Kernels existance verified. \n\r");
 	}
 
 
@@ -217,10 +201,10 @@ EFI_STATUS efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
 		header.e_version != EV_CURRENT
 	)
 	{
-		Success(L"[Bootloader] Kernel format is not correct. Please restart or reinstall the software \n\r");
+		Print(L"[Bootloader] Kernel format is not correct. Please restart or reinstall the software \n\r");
 	}
 	else {
-		Success(L"[Bootloader] Kernel format successfully verified. \n\r");
+		Print(L"[Bootloader] Kernel format successfully verified. \n\r");
 	}
 
 
@@ -256,7 +240,7 @@ EFI_STATUS efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
 		}
 	}
 
-	Success(L"[Bootloader] Kernel was successfully loaded. \n\r");
+	Print(L"[Bootloader] Kernel was successfully loaded. \n\r");
 
 
 
@@ -266,12 +250,12 @@ EFI_STATUS efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
 	Print(L"\n\r");
 	if (newFont == NULL)
 	{ // TODO Maybe add fallback font
-		Error(L"[Bootloader] Font %s could not be loaded: Returning to fallback font", "zap-light16.psf \n\r"); // TODO MAke automatic // FIXME not working with %s
-		Error(L"[Bootloader] Failed to load Fallback Font: Returning to system standard font \n\r"); // TODO obvious
+		Print(L"[Bootloader] Font %s could not be loaded: Returning to fallback font", "zap-light16.psf \n\r"); // TODO MAke automatic // FIXME not working with %s
+		Print(L"[Bootloader] Failed to load Fallback Font: Returning to system standard font \n\r"); // TODO obvious
 	}
 	else 
 	{
-		Success(L"[Bootloader] Font %s was successfully loaded! Character size: %d \n\r", "zap-light16", newFont->psf1_Header->charsize); // TODO Make this automatic too
+		Print(L"[Bootloader] Font %s was successfully loaded! Character size: %d \n\r", "zap-light16", newFont->psf1_Header->charsize); // TODO Make this automatic too
 	}
 
 	// Initializing the graphics
@@ -316,20 +300,20 @@ EFI_STATUS efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
 			//Print((CHAR16*)configTable->VendorTable);
 			if (strcmp((CHAR8*)"RSD PTR ", (CHAR8*)configTable->VendorTable, 8))
 			{
-				Print(L"hi ");
+				rsdp = (void*)configTable->VendorTable;
 				//break;
 			}
 		}
 		configTable++;
 	}
-	Success(L"Found RSD PTRs");
+	Print(L"Found RSD PTRs");
 
 
 
 
 
 	Print(L"\n\r");
-	Info(L"[Bootloader] I am Alex, remember me? Your bootloader. Anyways, goodbye. My job is done \n\r");
+	Print(L"[Bootloader] I am Alex, remember me? Your bootloader. Anyways, goodbye. My job is done \n\r");
 
 
 

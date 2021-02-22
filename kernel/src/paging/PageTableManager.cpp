@@ -6,6 +6,9 @@
 
 namespace Visionizer
 {
+
+    PageTableManager GlobalPTM = NULL;
+
     PageTableManager::PageTableManager(PageTable* PML4Address)
     {
         // This may seem useless, but we never want the dev to forget to add a PML4, this is why we require it with a constructor.

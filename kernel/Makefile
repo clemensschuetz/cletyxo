@@ -4,6 +4,7 @@ OSNAME = Cletyxo
 GNUEFI = ../gnu-efi
 OVMFDIR = ../OVMFbin
 LDS = kernel.ld
+LDS-EXTERN-CALL = kernel/kernel.ld
 CC = gcc
 ASMC = nasm
 LD = ld
@@ -14,6 +15,7 @@ INTERRUPTFLAGS = -mno-red-zone -mgeneral-regs-only -ffreestanding
 
 ASMFLAGS = 
 LDFLAGS = -T $(LDS) -static -Bsymbolic -nostdlib
+LDFLAGS-EXTERN-CALL = -T $(LDS-EXTERN-CALL) -static -Bsymbolic -nostdlib
 
 SRCDIR := src
 OBJDIR := lib
@@ -29,6 +31,8 @@ OBJS += $(patsubst $(SRCDIR)/%.asm, $(OBJDIR)/%_asm.o, $(ASMSRC))
 DIRS = $(wildcard $(SRCDIR)/*)
 
 kernel: $(OBJS) link
+
+kernel-extern-call: $(OBJS) link-extern-call
 
 # The Interrupts must be compiled differently
 $(OBJDIR)/interrupts/Interrupts.o: $(SRCDIR)/interrupts/Interrupts.cpp
@@ -65,8 +69,16 @@ buildimg:
 	mcopy -i $(BUILDDIR)/$(OSNAME).img $(BUILDDIR)/kernel.elf ::
 	mcopy -i $(BUILDDIR)/$(OSNAME).img $(BUILDDIR)/zap-light16.psf ::
 
+link-extern-call:
+	@ echo !==== LINKING CALLED FROM EXTERN CALL
+	$(LD) $(LDFLAGS-EXTERN-CALL) -o $(BUILDDIR)/kernel.elf $(OBJS)
 
 pfb: kernel link buildimg
+
+
+pfb-extern-call: kernel-extern-call link-extern-call buildimg 
+
+
 
 run:
 	qemu-system-x86_64 -drive file=$(BUILDDIR)/$(OSNAME).img -m 256M -cpu qemu64 -drive if=pflash,format=raw,unit=0,file="$(OVMFDIR)/OVMF_CODE-pure-efi.fd",readonly=on -drive if=pflash,format=raw,unit=1,file="$(OVMFDIR)/OVMF_VARS-pure-efi.fd" -net none

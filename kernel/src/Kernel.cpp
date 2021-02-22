@@ -15,7 +15,7 @@ namespace Visionizer
 		// ----------------------------------------- COPYRIGHT NOTICE ----------------------------
 		
 		// We have to print a copyright notice
-		GlobalRenderer->Print("Visionizer's SysMNG");
+		GlobalRenderer->Print("Visionizer's Cletyxo");
 		GlobalRenderer->NextLine();
 		GlobalRenderer->Print("Copyright (C) Clemens Schuetz, Visionizer & Cletyxo Core Contributors. No guarantees granted.");
 		// -----------------------
@@ -27,6 +27,7 @@ namespace Visionizer
 		
 		GlobalRenderer->NextLine();
 		GlobalRenderer->Print(ToHString((uint64_t)bootInfo->rsdp));
+
 
 
 		// The actual while(true) loop

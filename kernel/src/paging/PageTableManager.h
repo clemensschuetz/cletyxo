@@ -15,4 +15,5 @@ namespace Visionizer
 
         void MapMemory(void* virtualMemory, void* physicalMemory);
     };
+    extern PageTableManager GlobalPTM;
 }
