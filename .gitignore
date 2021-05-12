@@ -1,0 +1,15 @@
+/build
+/bin
+*.o
+*.a
+*.iso
+*.img
+*.ignore.*
+TRACKER.txt
+/boot/extern/
+/.vscode
+/out
+
+# Added by cargo
+
+/target
